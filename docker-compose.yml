@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  django:
+    build: .
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  db:
+    image: postgres:15.1-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: thisIsAStrongPasswordPostgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_DB: employee_review_postgres
+    # volumes:  # Uncomment this if you want to persist data locally
+    #   - ./postgres:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: postgres@postgres.com
+      PGADMIN_DEFAULT_PASSWORD: thisIsAStrongPasswordPGAdmin
+    depends_on:
+      - db
+    ports:
+      - 5050:80
+    volumes: # Automatically add a server to pgadmin
+      - ./servers.json:/pgadmin4/servers.json
